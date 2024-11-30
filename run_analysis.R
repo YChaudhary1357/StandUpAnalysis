@@ -23,7 +23,5 @@ names(tidy_data) <- gsub("Mag", "Magnitude", names(tidy_data))
 names(tidy_data) <- gsub("BodyBody", "Body", names(tidy_data))
 
 
-final_data <- tidy_data %>%
-  group_by(subject, activity) %>%
-  summarize_all(funs(mean))
+final_data <- summarize(group_by(tidy_data,subject, activity),across(everything(),mean))
 write.table(final_data, "final_tidy_data.txt", row.name=FALSE)
