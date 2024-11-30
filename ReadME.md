@@ -43,10 +43,7 @@ names(tidy_data) <- gsub("BodyBody", "Body", names(tidy_data))
 ```
 
 ```{r writing_data,echo=TRUE}
-final_data <- tidy_data %>%
-  group_by(subject, activity) %>%
-  summarize_all(funs(mean))
+final_data <- summarise(group_by(tidy_data,subject, activity),across(everything(),mean))
 write.table(final_data, "final_tidy_data.txt", row.name=FALSE)
-
 ```
 
