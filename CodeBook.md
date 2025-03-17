@@ -1,94 +1,53 @@
-# CodeBook
+# 📖 Codebook: Stand-up Comedy Transcript Analysis  
 
-## Data Source
-The data used in this project was obtained from the accelerometers of the Samsung Galaxy S smartphone. The original data set can be found at the [UCI Machine Learning Repository](http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones).
+## 1️⃣ Dataset Overview  
+This dataset consists of **transcripts from 20 stand-up comedians**, scraped from [Scraps from the Loft](https://scrapsfromtheloft.com/stand-up-comedy-transcripts/). It is used to analyze vocabulary, common words, and profanity usage across different comedians.  
 
-## Data Description
-### Original Data
-- **subjects_train.txt / subjects_test.txt**: Subject identifiers for training and test sets.
-- **X_train.txt / X_test.txt**: Feature data for training and test sets.
-- **y_train.txt / y_test.txt**: Activity identifiers for training and test sets.
+## 2️⃣ Variables & Features  
 
-### Merged Data
-- **subject**: An identifier for the subject who carried out the experiment.
-- **activity**: The activity performed by the subject.
-- **TimeBodyAccelerometerMeanX**: Time domain body accelerometer mean in the X direction.
-- **TimeBodyAccelerometerMeanY**: Time domain body accelerometer mean in the Y direction.
-- **TimeBodyAccelerometerMeanZ**: Time domain body accelerometer mean in the Z direction.
-- **TimeBodyAccelerometerStdX**: Time domain body accelerometer standard deviation in the X direction.
-- **TimeBodyAccelerometerStdY**: Time domain body accelerometer standard deviation in the Y direction.
-- **TimeBodyAccelerometerStdZ**: Time domain body accelerometer standard deviation in the Z direction.
-- *(And so on for all the mean and standard deviation variables)*
+### **🔹 Raw Data Variables**
+- **comedians** – Name of the stand-up comedian.  
+- **transcript** – Full text of their stand-up routine. 
+- **transcripts** – Dictionary Containing Transcript of all Comics(keys).    
 
-### Transformations
-1. **Merging Data Sets**: Combined the training and test sets using `rbind()`.
-2. **Extracting Measurements**: Extracted only the measurements on the mean and standard deviation for each measurement using `select()`.
-3. **Descriptive Activity Names**: Replaced activity codes with descriptive activity names from `activity_labels.txt`.
-4. **Labeling Data Set**: Renamed columns with descriptive variable names, making them more readable by expanding abbreviations and standardizing.
-5. **Creating a Tidy Data Set**: Created a second, independent tidy data set with the average of each variable for each activity and each subject using `group_by()` and `summarize_all()`.
+### **🔹 Processed Data Variables**  
+- **cleaned_transcript** – Text after removing special characters and extra spaces.  
+- **word_count** – Total number of words in the transcript.  
+- **unique_words** – Number of unique words used.  
+- **f_word_count** – Number of times the comedian used the **F-word**.  
+- **s_word_count** – Number of times the comedian used the **S-word**.  
+- **one_hot_encoding** – A binary matrix representing the presence of words in the transcript.  
+- **Pickling** was used to **store and reload processed data efficiently**.
+- 
+---
 
-### Variables
-Below are the variables included in the tidy data set:
+## 3️⃣ Data Cleaning & Processing  
+- **Regular Expressions** were used to remove unwanted characters, punctuation, and extra spaces.  
+- **One-Hot Encoding** was applied to convert words into binary format for analysis.  
+- **WordCloud** was generated to visualize frequently used words.  
+- **Stop Words Removal** was performed to filter out common words like *the, is, and*.  
+- **Profanity Analysis** counted the occurrences of specific swear words.  
 
-- **subject**: Integer identifier for the subject.
-- **activity**: String descriptor of the activity performed.
-- **TimeBodyAccelerometerMeanX**: Numeric value, mean of time domain body accelerometer signal in the X direction.
-- **TimeBodyAccelerometerMeanY**: Numeric value, mean of time domain body accelerometer signal in the Y direction.
-- **TimeBodyAccelerometerMeanZ**: Numeric value, mean of time domain body accelerometer signal in the Z direction.
-- **TimeBodyAccelerometerStdX**: Numeric value, standard deviation of time domain body accelerometer signal in the X direction.
-- **TimeBodyAccelerometerStdY**: Numeric value, standard deviation of time domain body accelerometer signal in the Y direction.
-- **TimeBodyAccelerometerStdZ**: Numeric value, standard deviation of time domain body accelerometer signal in the Z direction.
-- *(And so on for all the mean and standard deviation variables)*
+---
 
-### Data Processing Steps
-1. **Loading Data**: Loaded the datasets from their respective files.
-2. **Merging Data**: Merged the training and test sets to create one complete data set.
-3. **Filtering Measurements**: Selected only the columns related to mean and standard deviation.
-4. **Replacing Activity Codes**: Used descriptive activity names for the activity codes.
-5. **Labeling Variables**: Renamed columns with more descriptive names.
-6. **Creating Tidy Data Set**: Created a new data set with the average of each variable for each activity and each subject.
+## 4️⃣ Analysis Methods  
+- **Word Frequency Analysis** to find the most used words by each comedian.  
+- **WordCloud Visualization** for an overview of the comedian’s vocabulary.  
+- **Profanity Analysis** to determine how frequently each comedian uses explicit words.  
 
-### Example Code for Data Transformation
-```r
-# Load necessary libraries
-library(dplyr)
+---
 
-# Read data
-features <- read.table("UCI HAR Dataset/features.txt", col.names = c("n", "functions"))
-activities <- read.table("UCI HAR Dataset/activity_labels.txt", col.names = c("code", "activity"))
-subject_train <- read.table("UCI HAR Dataset/train/subject_train.txt", col.names = "subject")
-x_train <- read.table("UCI HAR Dataset/train/X_train.txt", col.names = features$functions)
-y_train <- read.table("UCI HAR Dataset/train/y_train.txt", col.names = "code")
-subject_test <- read.table("UCI HAR Dataset/test/subject_test.txt", col.names = "subject")
-x_test <- read.table("UCI HAR Dataset/test/X_test.txt", col.names = features$functions)
-y_test <- read.table("UCI HAR Dataset/test/y_test.txt", col.names = "code")
+## 5️⃣ Output Files  
+- **corpus.pkl** – Preprocessed transcripts after cleaning.
+- **dtm.stop.pkl** – Preprocessed transcripts after removing stopwords.  
+- **wordclouds/** – Folder containing WordCloud images for each comedian.  
+- **profanity_counts.csv** – A CSV file with the count of explicit words for each comedian.  
+- **final_analysis.csv** – Processed dataset with all extracted features.  
 
-# Merge the datasets
-subject <- rbind(subject_train, subject_test)
-x <- rbind(x_train, x_test)
-y <- rbind(y_train, y_test)
-merged_data <- cbind(subject, y, x)
+---
 
-# Extract measurements on the mean and standard deviation
-tidy_data <- merged_data %>%
-  select(subject, code, contains("mean"), contains("std"))
+## 📌 Notes  
+- This analysis focuses only on text processing and does not account for **speech tone or delivery style**.  
+- Stop words removal affects word frequency counts, so some common words are excluded.  
+- The dataset is limited to publicly available transcripts, so coverage may vary.  
 
-# Use descriptive activity names
-tidy_data$code <- activities[tidy_data$code, 2]
-
-# Label the data set with descriptive variable names
-names(tidy_data)[2] <- "activity"
-names(tidy_data) <- gsub("^t", "Time", names(tidy_data))
-names(tidy_data) <- gsub("^f", "Frequency", names(tidy_data))
-names(tidy_data) <- gsub("Acc", "Accelerometer", names(tidy_data))
-names(tidy_data) <- gsub("Gyro", "Gyroscope", names(tidy_data))
-names(tidy_data) <- gsub("Mag", "Magnitude", names(tidy_data))
-names(tidy_data) <- gsub("BodyBody", "Body", names(tidy_data))
-
-# Create a second, independent tidy data set
-final_data <- tidy_data %>%
-  group_by(subject, activity) %>%
-  summarize_all(funs(mean))
-
-# Write the final tidy data set to a text file
-write.table(final_data, "final_tidy_data.txt", row.name=FALSE)
